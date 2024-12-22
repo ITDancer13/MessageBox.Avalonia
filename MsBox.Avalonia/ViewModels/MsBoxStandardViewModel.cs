@@ -53,6 +53,7 @@ public class MsBoxStandardViewModel : AbstractMsBoxViewModel, ISetFullApi<Button
     public override string InputLabel { get; internal set; }
     public override string InputValue { get; set; }
     public override bool IsInputMultiline { get; internal set; }
+    public override char InputPasswordChar { get; internal set; }
     public override bool IsInputVisible { get; internal set; }
     public virtual object? Context { get; internal set; } = null;
     public virtual bool IsContextVisible { get; internal set; } = false;
