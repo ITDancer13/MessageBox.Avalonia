@@ -56,8 +56,7 @@ public class MsBox<V, VM, T> : IMsBox<T> where V : UserControl, IFullApi<T>, ISe
         _viewModel.SetFullApi(_view);
         var window = new MsBoxWindow
         {
-            Content = _view,
-            DataContext = _viewModel
+            Content = _view, DataContext = _viewModel
         };
         window.Closed += _view.CloseWindow;
 
@@ -83,8 +82,7 @@ public class MsBox<V, VM, T> : IMsBox<T> where V : UserControl, IFullApi<T>, ISe
         _viewModel.SetFullApi(_view);
         var window = new MsBoxWindow
         {
-            Content = _view,
-            DataContext = _viewModel
+            Content = _view, DataContext = _viewModel
         };
         window.Closed += _view.CloseWindow;
         var tcs = new TaskCompletionSource<T>();
@@ -100,6 +98,7 @@ public class MsBox<V, VM, T> : IMsBox<T> where V : UserControl, IFullApi<T>, ISe
     }
 
     private readonly string ClickAwayParam = "MsBoxIdentifier_Cancel";
+
     /// <summary>
     ///  Show messagebox as popup
     /// </summary>
@@ -108,6 +107,7 @@ public class MsBox<V, VM, T> : IMsBox<T> where V : UserControl, IFullApi<T>, ISe
     public Task<T> ShowAsPopupAsync(ContentControl owner)
     {
         DialogHostStyles style = null;
+
         if (!owner.Styles.OfType<DialogHostStyles>().Any())
         {
             style = [];
@@ -149,10 +149,43 @@ public class MsBox<V, VM, T> : IMsBox<T> where V : UserControl, IFullApi<T>, ISe
             owner.Content = null;
             dh.Content = null;
             owner.Content = parentContent;
+
             if (style != null)
             {
                 owner.Styles.Remove(style);
             }
+
+            tcs.TrySetResult(r);
+        });
+        DialogHost.Show(_view, dh.Identifier);
+        return tcs.Task;
+    }
+
+    public Task<T> ShowAsPopupAsync(DialogHost dh)
+    {
+        _viewModel.SetFullApi(_view);
+
+        dh.CloseOnClickAway = false;
+        if (_viewModel is AbstractMsBoxViewModel abv) dh.CloseOnClickAway = abv.CloseOnClickAway;
+        dh.CloseOnClickAwayParameter = ClickAwayParam;
+        dh.DialogClosing += (ss, ee) =>
+        {
+            if (ee.Parameter?.ToString() == ClickAwayParam)
+            {
+                _view.Close();
+            }
+        };
+
+        var tcs = new TaskCompletionSource<T>();
+        _view.SetCloseAction(() =>
+        {
+            var r = _view.GetButtonResult();
+
+            if (dh.CurrentSession != null && dh.CurrentSession.IsEnded == false)
+            {
+                DialogHost.Close(dh.Identifier);
+            }
+
             tcs.TrySetResult(r);
         });
         DialogHost.Show(_view, dh.Identifier);
