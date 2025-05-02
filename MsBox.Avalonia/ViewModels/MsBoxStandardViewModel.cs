@@ -38,17 +38,17 @@ public class MsBoxStandardViewModel : AbstractMsBoxViewModel, ISetFullApi<Button
     public bool IsCancelShowed { get; private set; }
 
     #region Hyperlink properties
-    public override RelayCommand HyperLinkCommand { get; internal set; }
-    public override string HyperLinkText { get; internal set; }
-    public override bool IsHyperLinkVisible { get; internal set; }
+    public override RelayCommand HyperLinkCommand { get; set; }
+    public override string HyperLinkText { get; set; }
+    public override bool IsHyperLinkVisible { get; set; }
     #endregion
 
     #region Input properties
-    public override string InputLabel { get; internal set; }
+    public override string InputLabel { get; set; }
     public override string InputValue { get; set; }
-    public override bool IsInputMultiline { get; internal set; }
-    public override char InputPasswordChar { get; internal set; }
-    public override bool IsInputVisible { get; internal set; }
+    public override bool IsInputMultiline { get; set; }
+    public override char InputPasswordChar { get; set; }
+    public override bool IsInputVisible { get; set; }
     #endregion
 
     public RelayCommand ButtonClickCommand { get; }
